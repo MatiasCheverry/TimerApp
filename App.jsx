@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Button, TextInput } from "react-native";
-
+import RunningTimer from "./Components/RunningTimer.jsx";
 export default function App() {
   const [timer, setTimer] = useState({
     rounds: 2,
@@ -64,6 +64,9 @@ export default function App() {
       return setTimer(newTimer);
     }
   };
+  const timerOn = function () {
+    setRunning(true);
+  };
   const startTimer = function (duration) {
     var start = Date.now(),
       diff,
@@ -99,7 +102,8 @@ export default function App() {
   if (running === false) {
     return (
       <View style={styles.container}>
-        <Text style={styles.timeDisplay}>{timeleft}</Text>
+        {running ? <Text style={styles.timeDisplay}>{timeleft}</Text> : <></>}
+
         <View style={styles.workContainer}>
           <Text style={styles.textTitle}>{"Rounds"}</Text>
           <View style={styles.inputContainer}>
@@ -137,12 +141,14 @@ export default function App() {
           </View>
         </View>
         <View style={styles.buttonstyle}>
-          <Button title="Start" onPress={startHandler} />
+          <Button title="Start" onPress={timerOn} />
         </View>
 
         <StatusBar style="auto" />
       </View>
     );
+  } else {
+    return <RunningTimer timerSettings={timer} />;
   }
 }
 const styles = StyleSheet.create({
