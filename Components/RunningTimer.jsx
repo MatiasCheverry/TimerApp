@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Button, TextInput } from "react-native";
 
 export default function runningTimer({ timerSettings }) {
-	const [clock, setClock] = useState({ minutes: "00", seconds: "00" });
+	const [clock, setClock] = useState({
+		minutes: "00",
+		seconds: "00",
+		working: false,
+	});
 	const [intervalTimer, setIntervalTimer] = useState({
 		warn: {
 			seconds:
@@ -25,12 +29,12 @@ export default function runningTimer({ timerSettings }) {
 		},
 	});
 
-	console.log(intervalTimer);
-	const startTimer = function (duration) {
+	const startTimer = function (duration, prop) {
 		var start = Date.now(),
 			diff,
 			minutes,
 			seconds;
+		console.log(prop);
 
 		function timer() {
 			// get the number of seconds that have elapsed since
@@ -50,22 +54,35 @@ export default function runningTimer({ timerSettings }) {
 				// add one second so that the count down starts at the full duration
 				// example 05:00 not 04:59
 				start = Date.now() + 1000;
+				clearInterval(timerRunner);
+				console.log("finished");
+				var newintervalTimer = { ...intervalTimer };
+				newintervalTimer[prop].rounds = intervalTimer[prop].rounds - 1;
+				setIntervalTimer(newintervalTimer);
 			}
-			console.log("holaaa");
-			console.log(countDown);
-			return setClock(countDown);
+
+			return setClock({ minutes: minutes, seconds: seconds });
 		}
 		// we don't want to wait a full second before the timer starts
 		timer();
-		setInterval(timer, 1000);
+		var timerRunner = setInterval(timer, 1000);
 	};
 	const clockRunner = async function () {
+		//necesito un afuncion que corra los tres tiempos y empiece por el warn
+		console.log("corri esto");
 		if (parseInt(intervalTimer.work.rounds) > 0) {
+			if (intervalTimer.warn.rounds !== 0) {
+				console.log("esto tambien");
+				await startTimer(intervalTimer.warn.seconds, "warn");
+			}
+			console.log("----------------------------");
+			console.log(intervalTimer.warn);
+			console.log("----------------------------");
 			for (const item in intervalTimer) {
 				console.log(intervalTimer[item]);
 
 				const newRounds = parseInt(intervalTimer[item].rounds - 1);
-				await startTimer(intervalTimer[item].seconds);
+				await startTimer(intervalTimer[item].seconds, item);
 				setIntervalTimer(
 					...intervalTimer,
 					(intervalTimer[item].rounds: newRounds)
@@ -75,7 +92,9 @@ export default function runningTimer({ timerSettings }) {
 	};
 	return (
 		<View style={styles.container}>
-			<Text>{clock.minutes + ":" + clock.seconds}</Text>
+			<Text style={styles.timeDisplay}>
+				{clock.minutes + ":" + clock.seconds}
+			</Text>
 			<Button onPress={() => clockRunner()} title={"Run"}></Button>
 		</View>
 	);

@@ -1,8 +1,10 @@
-export default function startTimer(duration) {
+async function startTimer(duration) {
     var start = Date.now(),
         diff,
         minutes,
         seconds;
+
+    console.log(start);
 
     function timer() {
         // get the number of seconds that have elapsed since
@@ -22,13 +24,15 @@ export default function startTimer(duration) {
             // add one second so that the count down starts at the full duration
             // example 05:00 not 04:59
             start = Date.now() + 1000;
+            clearInterval(timerRunner);
+            console.log("finished");
         }
-        console.log(countDown);
+        console.log(diff);
         return countDown;
     }
     // we don't want to wait a full second before the timer starts
     timer();
-    setInterval(timer, 1000);
+    var timerRunner = await setInterval(timer, 1000);
 }
 
-startTimer(60);
+startTimer(5);

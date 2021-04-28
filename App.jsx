@@ -7,7 +7,7 @@ export default function App() {
     rounds: 2,
     workTime: { minutes: "00", seconds: "00" },
     restTime: { minutes: "00", seconds: "00" },
-    warnTime: { minutes: "00", seconds: "00" },
+    warnTime: { minutes: "00", seconds: "05" },
   });
   const [running, setRunning] = useState(false);
   const [currentTimer, setCurrentTimer] = useState({});
@@ -15,7 +15,6 @@ export default function App() {
   const startHandler = function () {
     if (!running) {
       setRunning(true);
-      startTimer(60);
     }
   };
   const timeModHandler = function (propToMod, value) {
@@ -67,38 +66,7 @@ export default function App() {
   const timerOn = function () {
     setRunning(true);
   };
-  const startTimer = function (duration) {
-    var start = Date.now(),
-      diff,
-      minutes,
-      seconds;
 
-    function timer() {
-      // get the number of seconds that have elapsed since
-      // startTimer() was called
-      diff = duration - (((Date.now() - start) / 1000) | 0);
-
-      // does the same job as parseInt truncates the float
-      minutes = (diff / 60) | 0;
-      seconds = diff % 60 | 0;
-
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      seconds = seconds < 10 ? "0" + seconds : seconds;
-
-      var countDown = minutes + ":" + seconds;
-
-      if (diff <= 0) {
-        // add one second so that the count down starts at the full duration
-        // example 05:00 not 04:59
-        start = Date.now() + 1000;
-      }
-
-      return setTimeleft(countDown);
-    }
-    // we don't want to wait a full second before the timer starts
-    timer();
-    setInterval(timer, 1000);
-  };
   if (running === false) {
     return (
       <View style={styles.container}>
@@ -109,11 +77,7 @@ export default function App() {
           <View style={styles.inputContainer}>
             <Button title="-" onPress={() => roundModHandler(-1)} />
             <Text style={styles.timeDisplay}>{timer.rounds}</Text>
-            <Button
-              title="+"
-              onPress={() => roundModHandler(1)}
-              style={styles.buttonstyle}
-            />
+            <Button title="+" onPress={() => roundModHandler(1)} />
           </View>
           <Text style={styles.textTitle}>{"Work"}</Text>
           <View style={styles.inputContainer}>
@@ -121,11 +85,7 @@ export default function App() {
             <Text style={styles.timeDisplay}>
               {timer.workTime.minutes + ":" + timer.workTime.seconds}
             </Text>
-            <Button
-              title="+"
-              onPress={() => timeModHandler("workTime", 1)}
-              style={styles.buttonstyle}
-            />
+            <Button title="+" onPress={() => timeModHandler("workTime", 1)} />
           </View>
           <Text style={styles.textTitle}>{"Rest"}</Text>
           <View style={styles.inputContainer}>
@@ -133,11 +93,7 @@ export default function App() {
             <Text style={styles.timeDisplay}>
               {timer.restTime.minutes + ":" + timer.restTime.seconds}
             </Text>
-            <Button
-              title="+"
-              onPress={() => timeModHandler("restTime", 1)}
-              style={styles.buttonstyle}
-            />
+            <Button title="+" onPress={() => timeModHandler("restTime", 1)} />
           </View>
         </View>
         <View style={styles.buttonstyle}>
