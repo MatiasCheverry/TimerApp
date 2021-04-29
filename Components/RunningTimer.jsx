@@ -8,6 +8,7 @@ export default function runningTimer({ timerSettings }) {
 		seconds: "00",
 		working: false,
 	});
+
 	const [intervalTimer, setIntervalTimer] = useState({
 		warn: {
 			seconds:
@@ -29,14 +30,17 @@ export default function runningTimer({ timerSettings }) {
 		},
 	});
 
-	const startTimer = function (duration, prop) {
+	const startTimer = async function (duration, prop) {
 		var start = Date.now(),
 			diff,
 			minutes,
 			seconds;
+		console.log(
+			"startTimer() was called with:::::::::::::::::::::::::::::::"
+		);
 		console.log(prop);
-
-		function timer() {
+		console.log(intervalTimer[prop].seconds);
+		async function timer() {
 			// get the number of seconds that have elapsed since
 			// startTimer() was called
 			diff = duration - (((Date.now() - start) / 1000) | 0);
@@ -58,7 +62,7 @@ export default function runningTimer({ timerSettings }) {
 				console.log("finished");
 				var newintervalTimer = { ...intervalTimer };
 				newintervalTimer[prop].rounds = intervalTimer[prop].rounds - 1;
-				setIntervalTimer(newintervalTimer);
+				await setIntervalTimer(newintervalTimer);
 			}
 
 			return setClock({ minutes: minutes, seconds: seconds });
@@ -71,22 +75,17 @@ export default function runningTimer({ timerSettings }) {
 		//necesito un afuncion que corra los tres tiempos y empiece por el warn
 		console.log("corri esto");
 		if (parseInt(intervalTimer.work.rounds) > 0) {
-			if (intervalTimer.warn.rounds !== 0) {
+			if (intervalTimer.warn.rounds === 0) {
 				console.log("esto tambien");
 				await startTimer(intervalTimer.warn.seconds, "warn");
 			}
-			console.log("----------------------------");
-			console.log(intervalTimer.warn);
-			console.log("----------------------------");
+			/*			console.log("----------------------------");
+            console.log(intervalTimer.warn);
+            console.log("----------------------------");*/
 			for (const item in intervalTimer) {
-				console.log(intervalTimer[item]);
-
-				const newRounds = parseInt(intervalTimer[item].rounds - 1);
-				await startTimer(intervalTimer[item].seconds, item);
-				setIntervalTimer(
-					...intervalTimer,
-					(intervalTimer[item].rounds: newRounds)
-				);
+				if (intervalTimer[item].rounds !== 0) {
+					await startTimer(intervalTimer[item].seconds, item);
+				}
 			}
 		}
 	};
